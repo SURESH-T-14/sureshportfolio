@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Image as ImageIcon, X } from 'lucide-react';
+import { FileText, Download, X } from 'lucide-react';
 
 interface Certificate {
   id: number;
@@ -278,9 +278,7 @@ const Certificates: React.FC = () => {
                         download
                         className="flex-1 flex items-center justify-center gap-1 border border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 px-3 py-2 rounded-lg transition-all duration-300 text-sm"
                       >
-                        <svg size={16} className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19v-7m0 0V5m0 7H5m7 0h7" />
-                        </svg>
+                        <Download size={16} />
                         <span>Download</span>
                       </a>
                     </div>
