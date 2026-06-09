@@ -149,6 +149,14 @@ const Certificates: React.FC = () => {
       date: "2024",
       description: "Professional internship completion certificate",
       fileUrl: "/certificates/wsa_internship_certificate_SureshT.pdf"
+    },
+    {
+      id: 18,
+      title: "Selenium WebDriver with Java & Frameworks",
+      issuer: "Professional Development",
+      date: "2024",
+      description: "Selenium WebDriver automation testing with Java and frameworks",
+      fileUrl: "/certificates/Selenium WebDriver with Java & Frameworks.pdf"
     }
   ]);
 
