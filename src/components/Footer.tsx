@@ -1,27 +1,33 @@
 import { motion } from 'framer-motion'
-import { FiGithub, FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi'
+import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi'
+import ArcReactor from './hud/ArcReactor'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   const socialLinks = [
-    { icon: FiGithub, link: 'https://github.com', label: 'GitHub' },
-    { icon: FiLinkedin, link: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: FiTwitter, link: 'https://twitter.com', label: 'Twitter' },
-    { icon: FiMail, link: 'mailto:suresh@example.com', label: 'Email' }
+    { icon: FiGithub, link: 'https://github.com/SURESH-T-14', label: 'GitHub' },
+    { icon: FiLinkedin, link: 'https://www.linkedin.com/in/suresh-t-/', label: 'LinkedIn' },
+    { icon: FiMail, link: 'mailto:suresh140105@gmail.com', label: 'Email' }
   ]
 
   return (
-    <footer className="bg-primary border-t border-secondary py-12 px-4">
+    <footer className="relative bg-void border-t border-steel py-12 px-4">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-hud opacity-60" />
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex items-start gap-3"
           >
-            <h3 className="text-2xl font-bold gradient-text mb-2">Suresh</h3>
-            <p className="text-gray-400">Full-stack Software Engineer</p>
+            <ArcReactor size={32} />
+            <div>
+              <h3 className="font-display font-bold text-xl gradient-text tracking-wide mb-1">SURESH</h3>
+              <p className="text-muted font-mono text-xs tracking-wider uppercase">Full-stack Software Engineer</p>
+            </div>
           </motion.div>
 
           {/* Quick Links */}
@@ -29,12 +35,13 @@ export default function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            viewport={{ once: true }}
           >
-            <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#about" className="hover:text-accent transition-colors">About</a></li>
-              <li><a href="#projects" className="hover:text-accent transition-colors">Projects</a></li>
-              <li><a href="#contact" className="hover:text-accent transition-colors">Contact</a></li>
+            <h4 className="hud-label mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-muted font-body">
+              <li><a href="#about" className="hover:text-stark-gold transition-colors">About</a></li>
+              <li><a href="#projects" className="hover:text-stark-gold transition-colors">Projects</a></li>
+              <li><a href="#contact" className="hover:text-stark-gold transition-colors">Contact</a></li>
             </ul>
           </motion.div>
 
@@ -43,9 +50,10 @@ export default function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            viewport={{ once: true }}
           >
-            <h4 className="font-semibold mb-4">Follow Me</h4>
-            <div className="flex gap-4 text-2xl">
+            <h4 className="hud-label mb-4">Follow Me</h4>
+            <div className="flex gap-4 text-xl">
               {socialLinks.map((social, idx) => {
                 const Icon = social.icon
                 return (
@@ -54,8 +62,8 @@ export default function Footer() {
                     href={social.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.2, color: '#3b82f6' }}
-                    className="text-gray-400 hover:text-accent transition-colors"
+                    whileHover={{ scale: 1.15, y: -2 }}
+                    className="text-muted hover:text-stark-gold transition-colors"
                     title={social.label}
                   >
                     <Icon />
@@ -67,16 +75,17 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-secondary mb-8"></div>
+        <div className="border-t border-steel mb-8"></div>
 
         {/* Copyright */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          className="text-center text-gray-400"
+          viewport={{ once: true }}
+          className="text-center text-muted font-mono text-xs tracking-wider"
         >
-          <p>© {currentYear} Suresh. All rights reserved.</p>
-          <p className="text-sm mt-2">Designed and built with <span className="text-red-500">❤</span> using React & Tailwind CSS</p>
+          <p>© {currentYear} AI-OS // SURESH. ALL RIGHTS RESERVED.</p>
+          <p className="mt-2">Designed &amp; built with <span className="text-bio-aqua">❤</span> using React, Three.js &amp; Tailwind CSS</p>
         </motion.div>
       </div>
     </footer>

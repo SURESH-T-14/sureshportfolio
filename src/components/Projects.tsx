@@ -1,118 +1,132 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { FiGithub, FiExternalLink } from 'react-icons/fi'
+import { useIsDesktopViewport } from '../hooks/useIsDesktopViewport'
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+import { useWorldStore, chapterProgress, CHAPTERS } from '../stores/useWorldStore'
+import { projects } from '../lib/projects'
+import HudFrame from './hud/HudFrame'
+
+const PROJECTS_CHAPTER = CHAPTERS.find((c) => c.id === 'projects')!
+
+const linkClass =
+  'font-editorial text-sm text-signal-white/80 hover:text-bio-aqua flex items-center gap-2 border-b border-transparent hover:border-bio-aqua pb-0.5 transition-colors'
 
 export default function Projects() {
-  const projects = [
-    {
-      title: 'AI-Based Money Mentor',
-      description: 'Full-stack AI-powered financial advisory platform. Integrated Google Gemini AI API for real-time conversational financial guidance, processing 100+ concurrent user queries. Implemented microservices backend with secure RESTful APIs and real-time data synchronization using WebSockets.',
-      tags: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Python', 'Django', 'Google Gemini API'],
-      github: 'https://github.com/SURESH-T-14/ai-money-mentor',
-      live: '#'
-    },
-    {
-      title: 'Student Management System',
-      description: 'Role-based Java full-stack application managing 500+ student records with separate dashboards for Admin, Faculty, and Students. Implemented JWT authentication, CRUD operations, and CI/CD pipeline using GitHub Actions for automated testing and deployment.',
-      tags: ['Java', 'Spring Boot', 'MySQL', 'JWT', 'GitHub Actions', 'REST APIs'],
-      github: 'https://github.com/SURESH-T-14/Student-Management-System-java',
-      live: '#'
-    },
-    {
-      title: 'AccessAI Bot',
-      description: 'Accessibility-focused multi-modal AI assistant supporting gesture, voice, and text interactions. Implemented real-time hand gesture recognition using TensorFlow.js and MediaPipe (95% accuracy), integrated Google Gemini API, Firebase auth with MFA, and Python OpenCV for visual processing at 30 FPS.',
-      tags: ['React.js', 'Node.js', 'Python', 'TensorFlow.js', 'MediaPipe', 'OpenCV', 'Firebase', 'MongoDB', 'Google Gemini API'],
-      github: 'https://github.com/SURESH-T-14/AccessAI',
-      live: '#'
-    }
-  ]
+  const isDesktop = useIsDesktopViewport()
+  const reducedMotion = usePrefersReducedMotion()
+  const showWorld = isDesktop && !reducedMotion
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
+  const activeIndex = useWorldStore((s) => {
+    const local = chapterProgress(s.globalProgress, PROJECTS_CHAPTER)
+    return Math.min(projects.length - 1, Math.floor(local * projects.length))
+  })
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  }
+  if (!showWorld) {
+    return (
+      <section id="projects" className="py-24 px-6 bg-abyss text-signal-white">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-data text-xs tracking-[0.3em] uppercase text-bio-aqua mb-4">Selected Work</p>
+          <h2 className="font-kinetic font-semibold text-4xl md:text-5xl mb-14">Projects</h2>
 
-  return (
-    <section id="projects" className="py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center"
-        >
-          Featured Projects
-        </motion.h2>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {projects.map((project, idx) => (
-            <motion.div
-              key={idx}
-              variants={itemVariants}
-              className="group bg-secondary/50 rounded-lg overflow-hidden border border-accent/20 hover:border-accent/50 transition-all duration-300 glow-effect"
-            >
-              <div className="bg-gradient-primary h-32 opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-3 group-hover:text-accent transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                  {project.description}
-                </p>
-                
+          <div className="space-y-16">
+            {projects.map((project, idx) => (
+              <div key={idx} className="border-t border-signal-white/10 pt-8">
+                <span className="font-data text-xs text-signal-white/40">
+                  {String(idx + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+                </span>
+                <h3 className="font-kinetic text-2xl md:text-3xl mt-2 mb-3">{project.title}</h3>
+                <img
+                  src={project.image}
+                  alt={`${project.title} UI`}
+                  loading="lazy"
+                  className="w-full rounded-none border border-bio-aqua/20 mb-5 object-cover max-h-72"
+                />
+                <p className="font-editorial text-signal-white/60 leading-relaxed mb-5">{project.description}</p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-accent/20 text-accent text-xs rounded-full font-semibold"
-                    >
+                    <span key={i} className="font-data text-[11px] text-bio-aqua border border-bio-aqua/30 px-2 py-1">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-6">
+                  <a href={project.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    <FiGithub /> {project.githubIsProfileFallback ? 'GitHub Profile' : 'Code'}
+                  </a>
+                  {project.live !== '#' && (
+                    <a href={project.live} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                      <FiExternalLink /> Live
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const active = projects[activeIndex]
+
+  return (
+    <section id="projects" className="relative h-[350vh] text-signal-white">
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 lg:px-16">
+          <p className="font-data text-xs tracking-[0.3em] uppercase text-bio-aqua mb-4">Selected Work</p>
+
+          <AnimatePresence>
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10, position: 'absolute' }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="grid md:grid-cols-2 gap-10 items-center"
+            >
+              {/* Hologram panel — the project's actual UI */}
+              <HudFrame accent="aqua" sweep className="p-2 order-2 md:order-1">
+                <img
+                  src={active.image}
+                  alt={`${active.title} UI`}
+                  loading="lazy"
+                  className="w-full max-h-[50vh] object-cover"
+                />
+              </HudFrame>
+
+              <div className="order-1 md:order-2">
+                <span className="font-data text-xs text-signal-white/40">
+                  {String(activeIndex + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+                </span>
+                <h3 className="font-kinetic font-semibold text-3xl md:text-4xl mt-2 mb-4">{active.title}</h3>
+                <p className="font-editorial text-signal-white/60 leading-relaxed mb-6">{active.description}</p>
+
+                <div className="flex flex-wrap gap-2 mb-8">
+                  {active.tags.slice(0, 5).map((tag, i) => (
+                    <span key={i} className="font-data text-[11px] text-bio-aqua border border-bio-aqua/30 px-2 py-1">
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex gap-4">
-                  <motion.a
-                    href={project.github}
-                    whileHover={{ scale: 1.1 }}
-                    className="text-gray-300 hover:text-accent transition-colors flex items-center gap-2"
-                  >
-                    <FiGithub size={20} />
-                    <span className="text-sm">Code</span>
-                  </motion.a>
-                  <motion.a
-                    href={project.live}
-                    whileHover={{ scale: 1.1 }}
-                    className="text-gray-300 hover:text-accent transition-colors flex items-center gap-2"
-                  >
-                    <FiExternalLink size={20} />
-                    <span className="text-sm">Live</span>
-                  </motion.a>
+                <div className="flex gap-6">
+                  <a href={active.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    <FiGithub /> {active.githubIsProfileFallback ? 'GitHub Profile' : 'Code'}
+                  </a>
+                  {active.live !== '#' && (
+                    <a href={active.live} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                      <FiExternalLink /> Live
+                    </a>
+                  )}
                 </div>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+
+          <p className="font-data text-[10px] tracking-[0.2em] uppercase text-signal-white/30 mt-8">
+            Scroll to explore
+          </p>
+        </div>
       </div>
     </section>
   )

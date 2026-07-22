@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Single AI-OS bioluminescent palette. See the comment in
+     tailwind.config.js — these CSS vars back the utility classes below,
+     and are aliased under legacy names (--stark-*, --paper/--ink/--signal)
+     purely so not-yet-rewritten components reskin without per-file edits. */
+  --void: #07060b;
+  --panel: #12111a;
+  --steel: #262838;
+  --stark-red: #9b8cff;
+  --stark-red-glow: #b9aeff;
+  --stark-gold: #6ff3c9;
+  --ivory: #f3f1ff;
+  --muted: #8b92b0;
+  --hud-clip: 18px;
+
+  --ai-void: #020304;
+  --glow-primary: #6ff3c9;
+  --glow-secondary: #9b8cff;
+  --glow-accent: #9ffae0;
+  --warning: #ff5c5c;
+
+  --paper: #07060b;
+  --ink: #f3f1ff;
+  --ink-soft: #8b92b0;
+  --signal: #6ff3c9;
+  --line: #262838;
+}
+
+/* Scroll smoothing is owned by Lenis (see App.tsx) to avoid two smoothing
+   systems fighting each other. */
+* {
+  scroll-behavior: auto;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+body {
+  @apply bg-void text-ivory font-body;
+  background-color: var(--void);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--panel);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--stark-red), var(--stark-gold));
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--stark-gold);
+}
+
+/* Animation classes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.8s ease-out;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--stark-red) 0%, var(--stark-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effect */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(155, 140, 255, 0.45);
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 32px rgba(111, 243, 201, 0.6);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 12px rgba(155, 140, 255, 0.65);
+}
+
+/* Angular HUD panel clipping */
+.clip-hud {
+  clip-path: polygon(
+    var(--hud-clip) 0,
+    100% 0,
+    100% calc(100% - var(--hud-clip)),
+    calc(100% - var(--hud-clip)) 100%,
+    0 100%,
+    0 var(--hud-clip)
+  );
+}
+
+.clip-hud-sm {
+  --hud-clip: 10px;
+}
+
+.clip-hud-lg {
+  --hud-clip: 28px;
+}
+
+/* Base HUD panel surface */
+.hud-panel {
+  background: linear-gradient(160deg, var(--panel) 0%, #0c0b0e 100%);
+  border: 1px solid var(--steel);
+  position: relative;
+}
+
+/* HUD eyebrow label */
+.hud-label {
+  @apply font-mono text-xs tracking-[0.3em] uppercase;
+  color: var(--stark-gold);
+}
+
+.hud-cursor::after {
+  content: '_';
+  animation: blinkcursor 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

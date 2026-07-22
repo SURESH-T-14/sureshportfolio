@@ -1,103 +1,92 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useIsDesktopViewport } from '../hooks/useIsDesktopViewport'
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+import { useWorldStore, chapterProgress, CHAPTERS } from '../stores/useWorldStore'
+import { skillCategories } from '../lib/skills'
+import HudFrame from './hud/HudFrame'
 
+const LAB_CHAPTER = CHAPTERS.find((c) => c.id === 'lab')!
+
+/**
+ * Scene — AI Research Lab. Same one-card-at-a-time pattern as Projects:
+ * a pinned sticky frame, the active category driven by scroll progress
+ * through this chapter, with a quick crossfade between cards — and the
+ * active data cube in the 3D scene behind it highlights in sync (see
+ * LabChapter.tsx).
+ */
 export default function Skills() {
-  const skillCategories = [
-    {
-      category: 'Programming Languages',
-      skills: ['Java', 'JavaScript (ES6+)', 'Python', 'SQL', 'C']
-    },
-    {
-      category: 'Frontend',
-      skills: ['React.js', 'HTML5', 'CSS3', 'TailwindCSS', 'Responsive Web Design']
-    },
-    {
-      category: 'Backend',
-      skills: ['Node.js', 'Express.js', 'Spring Boot', 'RESTful APIs']
-    },
-    {
-      category: 'Databases',
-      skills: ['MySQL', 'MongoDB', 'Firebase Realtime DB', 'JDBC']
-    },
-    {
-      category: 'AI / ML',
-      skills: ['TensorFlow.js', 'MediaPipe', 'OpenCV', 'Google Gemini API']
-    },
-    {
-      category: 'Cloud & DevOps',
-      skills: ['AWS (EC2, S3)', 'Git', 'GitHub', 'GitHub Actions', 'CI/CD Pipelines']
-    },
-    {
-      category: 'Security',
-      skills: ['JWT Authentication', 'OAuth 2.0', 'RBAC', 'Multi-Factor Authentication']
-    },
-    {
-      category: 'Tools & Methodologies',
-      skills: ['Figma', 'Postman', 'Agile']
-    }
-  ]
+  const isDesktop = useIsDesktopViewport()
+  const reducedMotion = usePrefersReducedMotion()
+  const showWorld = isDesktop && !reducedMotion
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+  const activeIndex = useWorldStore((s) => {
+    const local = chapterProgress(s.globalProgress, LAB_CHAPTER)
+    return Math.min(skillCategories.length - 1, Math.floor(local * skillCategories.length))
+  })
+
+  if (!showWorld) {
+    return (
+      <section id="lab" className="py-20 px-4">
+        <div className="max-w-2xl mx-auto">
+          <p className="font-data text-xs tracking-[0.3em] uppercase text-bio-aqua mb-4">AI Research Lab</p>
+          <h2 className="font-kinetic font-semibold text-4xl md:text-5xl mb-14">Tech Arsenal</h2>
+
+          <div className="space-y-5">
+            {skillCategories.map((cat) => (
+              <HudFrame key={cat.category} accent="violet" className="p-6">
+                <h3 className="font-display font-bold text-sm tracking-wider uppercase text-ivory mb-4 pb-3 border-b border-steel">
+                  {cat.category}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {cat.skills.map((skill) => (
+                    <span key={skill} className="text-muted text-sm border border-steel/60 px-2.5 py-1">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </HudFrame>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5 },
-    },
-  }
+  const active = skillCategories[activeIndex]
 
   return (
-    <section id="skills" className="py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold mb-12 gradient-text text-center"
-        >
-          Skills & Expertise
-        </motion.h2>
+    <section id="lab" className="relative h-[300vh] text-signal-white">
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+        <div className="relative z-10 w-full max-w-xl px-6 lg:px-16 mx-auto">
+          <p className="font-data text-xs tracking-[0.3em] uppercase text-bio-aqua mb-4">AI Research Lab</p>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
-          {skillCategories.map((category, idx) => (
+          <AnimatePresence>
             <motion.div
-              key={idx}
-              variants={itemVariants}
-              className="bg-secondary/50 rounded-lg p-6 border border-accent/20 hover:border-accent/50 transition-colors"
+              key={activeIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10, position: 'absolute' }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
             >
-              <h3 className="text-xl font-bold mb-4 text-accent">{category.category}</h3>
-              <div className="space-y-2">
-                {category.skills.map((skill, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="text-gray-300 flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-accent rounded-full mr-3"></span>
+              <span className="font-data text-xs text-signal-white/40">
+                {String(activeIndex + 1).padStart(2, '0')} / {String(skillCategories.length).padStart(2, '0')}
+              </span>
+              <h3 className="font-kinetic font-semibold text-3xl md:text-5xl mt-2 mb-6">{active.category}</h3>
+
+              <div className="flex flex-wrap gap-2">
+                {active.skills.map((skill) => (
+                  <span key={skill} className="font-data text-[11px] text-bio-aqua border border-bio-aqua/30 px-2.5 py-1.5">
                     {skill}
-                  </motion.div>
+                  </span>
                 ))}
               </div>
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+
+          <p className="font-data text-[10px] tracking-[0.2em] uppercase text-signal-white/30 mt-14">
+            Scroll to explore
+          </p>
+        </div>
       </div>
     </section>
   )

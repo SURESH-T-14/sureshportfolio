@@ -1,72 +1,58 @@
 import { motion } from 'framer-motion'
+import { FiDownload } from 'react-icons/fi'
+import SectionHeading from './hud/SectionHeading'
+import HudFrame from './hud/HudFrame'
+import { profile } from '../lib/profile'
 
 export default function About() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.6 },
-    },
-  }
-
   return (
-    <section id="about" className="py-20 px-4 bg-secondary/30">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold mb-12 gradient-text"
-        >
-          About Me
-        </motion.h2>
+    <section id="about" className="py-20 px-4">
+      <div className="max-w-3xl mx-auto">
+        <SectionHeading eyebrow="SYS_MODULE: ABOUT_ME" title="System Profile" align="left" />
 
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid md:grid-cols-2 gap-12 items-center"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
         >
-          <motion.div variants={itemVariants} className="space-y-6">
-            <p className="text-gray-300 text-lg leading-relaxed">
+          <HudFrame accent="violet" className="p-8 space-y-6">
+            <div className="flex items-center gap-5">
+              <img
+                src="/photo/suresh-pic.jpg"
+                alt={profile.name}
+                className="w-20 h-20 rounded-full object-cover border-2 border-bio-aqua/50 shadow-[0_0_18px_rgba(111,243,201,0.35)]"
+              />
+              <div>
+                <p className="hud-label text-bio-aqua mb-1">Dossier // Personnel File</p>
+                <a
+                  href="/resume/sureshresume1.pdf"
+                  download
+                  className="inline-flex items-center gap-2 font-data text-xs text-signal-white/70 hover:text-bio-aqua transition-colors border-b border-transparent hover:border-bio-aqua pb-0.5"
+                >
+                  <FiDownload /> Download Resume
+                </a>
+              </div>
+            </div>
+
+            <p className="text-muted text-lg leading-relaxed">
               I'm a passionate and motivated Computer Science Engineering graduate with strong expertise in Full Stack Development, Java, MERN Stack, Spring Boot, REST APIs, MySQL, MongoDB, and AI-integrated applications. I thrive on solving complex problems and developing scalable, user-friendly software solutions.
             </p>
-            <p className="text-gray-300 text-lg leading-relaxed">
+            <p className="text-muted text-lg leading-relaxed">
               Throughout my career, I've completed multiple internships and built real-world projects including AI-powered platforms, student management systems, and accessibility-focused applications. I'm a quick learner, adaptable team player, and someone who is always eager to improve both technically and professionally.
             </p>
-            <p className="text-gray-300 text-lg leading-relaxed">
+            <p className="text-muted text-lg leading-relaxed">
               My goal is to grow as a software engineer by contributing to innovative projects while continuously expanding my knowledge in software development, cloud technologies, and AI. I'm dedicated to creating impactful solutions that make a difference.
             </p>
-          </motion.div>
 
-          <motion.div
-            variants={itemVariants}
-            className="relative"
-          >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="bg-gradient-primary rounded-lg p-1 glow-effect"
-            >
-              <div className="bg-primary rounded-lg p-8 text-center">
-                <div className="text-5xl mb-4">🚀</div>
-                <h3 className="text-2xl font-bold mb-2">Let's Build</h3>
-                <p className="text-gray-300">Something amazing together</p>
-              </div>
-            </motion.div>
-          </motion.div>
+            <div className="flex flex-wrap gap-2 pt-4 border-t border-steel">
+              {profile.personality.map((trait) => (
+                <span key={trait} className="font-data text-[11px] text-bio-aqua/80 border border-bio-aqua/25 px-2.5 py-1">
+                  {trait}
+                </span>
+              ))}
+            </div>
+          </HudFrame>
         </motion.div>
       </div>
     </section>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion, PanInfo } from 'framer-motion';
 import { FileText, Download, X, ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
+import SectionHeading from './hud/SectionHeading';
+import { achievements } from '../lib/profile';
 
 interface Certificate {
   id: number;
@@ -232,27 +234,24 @@ const Certificates: React.FC = () => {
   };
 
   return (
-    <section id="certificates" className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 px-4 overflow-hidden">
-      {/* Ambient glow orbs */}
-      <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
-
+    <section id="certificates" className="relative py-20 px-4 overflow-hidden">
       <div className="relative max-w-4xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent mb-4">
-            Certificates &amp; Credentials
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Professional certifications and credentials that demonstrate my expertise and commitment to continuous learning.
-          </p>
-        </motion.div>
+        <SectionHeading
+          eyebrow="ACHIEVEMENT VAULT"
+          title="Certificates & Credentials"
+          subtitle="Professional certifications and credentials that demonstrate my expertise and commitment to continuous learning."
+        />
+
+        <div className="flex flex-wrap justify-center gap-2.5 mb-14 -mt-6">
+          {achievements.map((item) => (
+            <span
+              key={item}
+              className="font-data text-[11px] text-signal-white/60 border border-signal-white/15 px-3 py-1.5"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
 
         {/* Carousel */}
         <div
@@ -263,10 +262,10 @@ const Certificates: React.FC = () => {
           {/* Left Arrow */}
           <motion.button
             aria-label="Previous certificate"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => paginate(-1)}
-            className="shrink-0 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-slate-800/80 border border-slate-600 hover:border-blue-400 hover:bg-blue-500/20 text-white flex items-center justify-center backdrop-blur-sm shadow-lg transition-colors"
+            className="clip-hud-sm shrink-0 z-20 w-11 h-11 sm:w-14 sm:h-14 bg-panel border border-steel hover:border-stark-gold hover:bg-stark-gold/10 text-stark-gold flex items-center justify-center shadow-lg transition-colors"
           >
             <ChevronLeft size={24} />
           </motion.button>
@@ -288,19 +287,31 @@ const Certificates: React.FC = () => {
                 onDragEnd={handleDragEnd}
                 className="group relative cursor-grab active:cursor-grabbing"
               >
-                {/* Animated gradient border glow */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 rounded-2xl opacity-40 group-hover:opacity-80 blur transition-opacity duration-500" />
+                <div className="group/hud relative hud-panel clip-hud border border-stark-red/40 hover:border-stark-red transition-colors duration-300 shadow-2xl flex flex-col overflow-hidden">
+                  {/* Corner brackets */}
+                  <span className="pointer-events-none absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-stark-gold opacity-80" />
+                  <span className="pointer-events-none absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-stark-gold opacity-80" />
+                  <span className="pointer-events-none absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-stark-gold opacity-80" />
+                  <span className="pointer-events-none absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-stark-gold opacity-80" />
 
-                <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col">
+                  {/* Scanline flicker sweep on transition */}
+                  <motion.div
+                    key={`sweep-${current.id}`}
+                    initial={{ opacity: 0.6 }}
+                    animate={{ opacity: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="pointer-events-none absolute inset-0 z-30 bg-gradient-to-b from-transparent via-stark-gold/20 to-transparent"
+                  />
+
                   {/* Index badge */}
-                  <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-xs font-semibold text-cyan-300 tracking-wide">
+                  <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-void/70 border border-stark-gold/40 font-mono text-xs text-stark-gold tracking-widest">
                     {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
                   </div>
                   <div className="absolute top-4 right-4 z-10 text-2xl select-none">🏆</div>
 
                   {/* Preview */}
                   <div
-                    className="relative w-full h-72 bg-slate-900 flex items-center justify-center overflow-hidden border-b border-slate-700 cursor-pointer"
+                    className="relative w-full h-72 bg-void flex items-center justify-center overflow-hidden border-b border-steel cursor-pointer"
                     onClick={() => setSelectedFile({ url: current.fileUrl, type: isImage(current.fileUrl) ? 'image' : 'pdf' })}
                   >
                     {isImage(current.fileUrl) ? (
@@ -311,12 +322,12 @@ const Certificates: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : isPDF(current.fileUrl) ? (
-                      <div className="flex flex-col items-center justify-center text-red-500 gap-2 group-hover:scale-105 transition-transform duration-500">
+                      <div className="flex flex-col items-center justify-center text-stark-red gap-2 group-hover:scale-105 transition-transform duration-500">
                         <FileText size={56} />
-                        <span className="text-sm text-gray-400">Click to Preview PDF</span>
+                        <span className="text-sm text-muted font-mono tracking-wide">Click to Preview PDF</span>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center text-gray-500 group-hover:scale-105 transition-transform duration-500">
+                      <div className="flex items-center justify-center text-muted group-hover:scale-105 transition-transform duration-500">
                         <FileText size={56} />
                       </div>
                     )}
@@ -325,18 +336,18 @@ const Certificates: React.FC = () => {
                   {/* Content */}
                   <div className="relative p-6 flex flex-col gap-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-2xl font-display font-bold text-ivory mb-1 group-hover:text-stark-gold transition-colors">
                         {current.title}
                       </h3>
-                      <p className="text-blue-400 font-semibold text-sm">{current.issuer}</p>
-                      <p className="text-gray-500 text-xs mb-2">{current.date}</p>
-                      <p className="text-gray-400 text-sm leading-relaxed">{current.description}</p>
+                      <p className="text-stark-red font-semibold text-sm font-mono">{current.issuer}</p>
+                      <p className="text-muted text-xs mb-2 font-mono">{current.date}</p>
+                      <p className="text-muted text-sm leading-relaxed">{current.description}</p>
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-slate-700">
+                    <div className="flex gap-3 pt-4 border-t border-steel">
                       <button
                         onClick={() => setSelectedFile({ url: current.fileUrl, type: isImage(current.fileUrl) ? 'image' : 'pdf' })}
-                        className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm font-medium"
+                        className="clip-hud-sm flex-1 flex items-center justify-center gap-2 bg-gradient-primary text-void px-4 py-2.5 transition-all duration-300 transform hover:scale-[1.02] text-sm font-bold font-mono tracking-wide uppercase"
                       >
                         <FileText size={16} />
                         <span>Preview</span>
@@ -344,7 +355,7 @@ const Certificates: React.FC = () => {
                       <a
                         href={current.fileUrl}
                         download
-                        className="flex-1 flex items-center justify-center gap-2 border border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 px-4 py-2.5 rounded-lg transition-all duration-300 text-sm font-medium"
+                        className="clip-hud-sm flex-1 flex items-center justify-center gap-2 border border-stark-gold text-stark-gold hover:bg-stark-gold/10 px-4 py-2.5 transition-all duration-300 text-sm font-bold font-mono tracking-wide uppercase"
                       >
                         <Download size={16} />
                         <span>Download</span>
@@ -359,24 +370,24 @@ const Certificates: React.FC = () => {
           {/* Right Arrow */}
           <motion.button
             aria-label="Next certificate"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => paginate(1)}
-            className="shrink-0 z-20 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-slate-800/80 border border-slate-600 hover:border-blue-400 hover:bg-blue-500/20 text-white flex items-center justify-center backdrop-blur-sm shadow-lg transition-colors"
+            className="clip-hud-sm shrink-0 z-20 w-11 h-11 sm:w-14 sm:h-14 bg-panel border border-steel hover:border-stark-gold hover:bg-stark-gold/10 text-stark-gold flex items-center justify-center shadow-lg transition-colors"
           >
             <ChevronRight size={24} />
           </motion.button>
         </div>
 
-        {/* Autoplay progress bar */}
-        <div className="max-w-xl mx-auto mt-6 h-1 rounded-full bg-slate-700/60 overflow-hidden">
+        {/* Autoplay progress bar ("reactor charge") */}
+        <div className="max-w-xl mx-auto mt-6 h-1 bg-steel overflow-hidden">
           {isPlaying && !selectedFile && (
             <motion.div
               key={progressKey}
               initial={{ width: '0%' }}
               animate={{ width: '100%' }}
               transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
-              className="h-full bg-gradient-to-r from-blue-400 to-cyan-300"
+              className="h-full bg-gradient-primary"
             />
           )}
         </div>
@@ -386,19 +397,19 @@ const Certificates: React.FC = () => {
           <button
             aria-label={isPlaying ? 'Pause autoplay' : 'Resume autoplay'}
             onClick={() => setIsPlaying((p) => !p)}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-cyan-300 border border-slate-700 hover:border-cyan-400 transition-colors"
+            className="clip-hud-sm w-8 h-8 flex items-center justify-center text-muted hover:text-stark-gold border border-steel hover:border-stark-gold transition-colors"
           >
             {isPlaying ? <Pause size={14} /> : <Play size={14} />}
           </button>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 max-w-md">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-md">
             {certificates.map((cert, i) => (
               <button
                 key={cert.id}
                 aria-label={`Go to certificate ${i + 1}`}
                 onClick={() => goTo(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  i === index ? 'w-6 bg-cyan-400' : 'w-2 bg-slate-600 hover:bg-slate-500'
+                className={`w-2 h-2 rotate-45 transition-all duration-300 ${
+                  i === index ? 'bg-stark-gold scale-125 shadow-[0_0_6px_rgba(111,243,201,0.8)]' : 'bg-steel hover:bg-muted'
                 }`}
               />
             ))}
@@ -413,7 +424,7 @@ const Certificates: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 flex items-center justify-center z-[9999] p-4 backdrop-blur-sm"
+            className="fixed inset-0 bg-void/95 flex items-center justify-center z-[9999] p-4 backdrop-blur-sm"
             onClick={() => setSelectedFile(null)}
           >
             <motion.div
@@ -421,19 +432,19 @@ const Certificates: React.FC = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 rounded-xl overflow-hidden shadow-2xl border border-slate-700"
+              className="relative w-full max-w-5xl max-h-[90vh] hud-panel overflow-hidden shadow-2xl border border-stark-red/40"
               onClick={(e) => e.stopPropagation()}
             >
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedFile(null)}
-                className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-3 rounded-full transition-colors z-[10000] shadow-lg"
+                className="clip-hud-sm absolute top-4 right-4 bg-stark-red hover:bg-stark-redglow text-ivory p-3 transition-colors z-[10000] shadow-lg"
               >
                 <X size={24} />
               </motion.button>
 
-              <div className="w-full h-[90vh] flex items-center justify-center bg-slate-800">
+              <div className="w-full h-[90vh] flex items-center justify-center bg-void">
                 {selectedFile.type === 'pdf' && (
                   <iframe
                     src={`${selectedFile.url}#toolbar=0&navpanes=0`}
