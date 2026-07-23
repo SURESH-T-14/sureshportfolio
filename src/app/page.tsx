@@ -26,12 +26,11 @@ import BootSequence from '../components/boot/BootSequence';
 import CustomCursor from '../components/CustomCursor';
 import WorldCanvasFallback from '../three/world/WorldCanvasFallback';
 import { useWorldTimeline } from '../hooks/useWorldTimeline';
-import { useIsDesktopViewport } from '../hooks/useIsDesktopViewport';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 // ssr:false so the three.js/R3F/postprocessing chunk never touches the
-// server render, and only ever downloads client-side on desktop viewports
-// with motion enabled — mobile/reduced motion never fetches it.
+// server render — it only downloads client-side, and only when motion is
+// enabled (prefers-reduced-motion opts out on any device).
 const WorldCanvas = dynamic(() => import('../three/world/WorldCanvas'), {
   ssr: false,
   loading: () => <WorldCanvasFallback />,
@@ -49,9 +48,8 @@ const WorldCanvas = dynamic(() => import('../three/world/WorldCanvas'), {
 function AppContent() {
   useWorldTimeline();
 
-  const isDesktop = useIsDesktopViewport();
   const reducedMotion = usePrefersReducedMotion();
-  const showWorld = isDesktop && !reducedMotion;
+  const showWorld = !reducedMotion;
 
   return (
     <div className="dark">

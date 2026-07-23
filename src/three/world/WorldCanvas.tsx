@@ -1,8 +1,10 @@
 import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
+import { useIsDesktopViewport } from '../../hooks/useIsDesktopViewport';
 import CameraTimeline from './CameraTimeline';
 import PostFX from './PostFX';
+import ShaderPrecompile from './ShaderPrecompile';
 import VisibilityGate from './VisibilityGate';
 import TunnelChapter from './chapters/TunnelChapter';
 import ElevatorChapter from './chapters/ElevatorChapter';
@@ -34,11 +36,17 @@ preloadWorldModels();
  * biggest performance cost in this scene.
  */
 const WorldCanvas: React.FC = () => {
+  // Phone GPUs handle this scene fine (VisibilityGate keeps only 1-2
+  // chapters drawing at once) but are far more fill-rate limited than
+  // desktop — capping dpr at 1 and skipping MSAA keeps frame cost down
+  // without visibly softening geometry this size on a phone screen.
+  const isDesktop = useIsDesktopViewport();
+
   return (
     <Canvas
       camera={{ position: [0, 0.4, 9], fov: 55 }}
-      dpr={[1, 1.5]}
-      gl={{ antialias: true, alpha: true }}
+      dpr={isDesktop ? [1, 1.5] : 1}
+      gl={{ antialias: isDesktop, alpha: true }}
       style={{ position: 'fixed', inset: 0, zIndex: 0 }}
     >
       <ambientLight intensity={0.4} />
@@ -94,6 +102,8 @@ const WorldCanvas: React.FC = () => {
         <VisibilityGate id="shutdown">
           <ShutdownChapter />
         </VisibilityGate>
+
+        <ShaderPrecompile />
       </Suspense>
 
       <CameraTimeline />
